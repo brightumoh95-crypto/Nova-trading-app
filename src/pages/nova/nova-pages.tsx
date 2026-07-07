@@ -9,9 +9,9 @@ type NovaPageProps = {
 };
 
 const strategyCards = [
-    { name: 'D’Alembert Shield', risk: 'Balanced', note: 'Uses the bundled D’Alembert XML/risk flow.' },
-    { name: 'Martingale Guard', risk: 'High discipline', note: 'Preserves stake-limit templates before execution.' },
-    { name: 'Oscar’s Grind Max-Stake', risk: 'Risk capped', note: 'Uses existing max-stake XML strategy patterns.' },
+    { name: 'D’Alembert Shield', risk: 'Balanced', note: 'A steady strategy template for controlled stake progression.' },
+    { name: 'Martingale Guard', risk: 'High discipline', note: 'A guided strategy template with clear stake limits before launch.' },
+    { name: 'Oscar’s Grind Max-Stake', risk: 'Risk capped', note: 'A disciplined template designed around capped exposure.' },
 ];
 
 const NovaMetric = ({ label, value, tone }: { label: string; value: string; tone?: string }) => (
@@ -46,9 +46,8 @@ export const NovaExecutiveDashboard = observer(({ onBuildStrategy }: { onBuildSt
                 <span className='nova-kicker'>Nova Trading Command Center</span>
                 <h1>Professional automated trading, powered by the Deriv engine.</h1>
                 <p>
-                    Nova keeps the original OAuth, WebSocket, Blockly strategy execution, proposals,
-                    purchases, account switching, and risk-management templates intact while upgrading the
-                    trading workspace into a premium dashboard.
+                    Build, test, and manage automated trading strategies from a polished workspace designed
+                    for clear account control, faster setup, and safer demo-first strategy practice.
                 </p>
                 <div className='nova-dashboard-hero__actions'>
                     <button type='button' onClick={onBuildStrategy}>Build strategy</button>
@@ -91,7 +90,7 @@ const PortfolioPage = observer(() => {
 const AssistantPage = () => (
     <NovaPanel eyebrow='AI Assistant' title='Strategy co-pilot'>
         <div className='nova-assistant'>
-            <p><strong>Nova AI is wired as a safe advisory layer.</strong> It can explain blocks, suggest risk checks, and prepare strategy ideas without bypassing the existing Blockly execution engine.</p>
+            <p><strong>Nova AI helps you plan with discipline.</strong> It can explain strategy blocks, suggest risk checks, and prepare demo-safe trading ideas before you run them.</p>
             <div className='nova-prompt-card'>Analyze my strategy for over-risking before I run it.</div>
             <div className='nova-prompt-card'>Suggest a demo-safe version of a D’Alembert bot.</div>
             <div className='nova-prompt-card'>Explain why a proposal or purchase failed.</div>
@@ -118,12 +117,12 @@ const AccountsPage = observer(() => {
     const store = useStore();
     const client = store?.client;
     return (
-        <NovaPanel eyebrow='Account Manager' title='Dynamic Deriv account discovery'>
+        <NovaPanel eyebrow='Account Manager' title='Connected trading accounts'>
             <div className='nova-status-stack'>
-                <div><strong>OAuth:</strong> PKCE callback flow preserved.</div>
-                <div><strong>Discovery:</strong> DerivWS accounts service remains the account source.</div>
-                <div><strong>Switching:</strong> Existing account switcher and WebSocket regeneration remain active.</div>
-                <div><strong>Session:</strong> Logout clears OAuth, local/session storage, WebSocket singleton, and cached accounts.</div>
+                <div><strong>Account access:</strong> Log in securely with Deriv to view eligible trading accounts.</div>
+                <div><strong>Discovery:</strong> Nova Trading lists the accounts available to your profile after login.</div>
+                <div><strong>Switching:</strong> Choose the account you want to prepare, test, or run strategies with.</div>
+                <div><strong>Session:</strong> Logging out clears this browser session on the current device.</div>
                 <div><strong>Current:</strong> {client?.loginid || 'Not connected'}</div>
             </div>
         </NovaPanel>
@@ -146,13 +145,13 @@ const AnalyticsPage = observer(() => {
 });
 
 const SettingsPage = () => (
-    <NovaPanel eyebrow='Settings' title='Production controls'>
+    <NovaPanel eyebrow='Settings' title='Workspace preferences'>
         <div className='nova-status-stack'>
-            <div><strong>Brand:</strong> Nova Trading configuration is managed in <code>brand.config.json</code>.</div>
-            <div><strong>OAuth:</strong> Deriv App ID and redirect URI remain environment-driven.</div>
-            <div><strong>Sessions:</strong> Sensitive tokens stay in runtime browser storage; environment files are git-ignored.</div>
-            <div><strong>Compatibility:</strong> Deriv API naming is retained where required by the engine.</div>
-            <div><strong>Scalability:</strong> Static SPA build served from <code>dist/</code>; WebSocket work remains provider-side.</div>
+            <div><strong>Brand:</strong> Nova Trading keeps your workspace focused and easy to navigate.</div>
+            <div><strong>Login:</strong> Connect securely with Deriv when you are ready to manage accounts.</div>
+            <div><strong>Sessions:</strong> You can log out at any time to clear the active browser session.</div>
+            <div><strong>Practice first:</strong> Use demo accounts to test every strategy before considering real-money trading.</div>
+            <div><strong>Control:</strong> Review risk settings, account mode, and strategy status before each run.</div>
         </div>
     </NovaPanel>
 );

@@ -27,7 +27,7 @@ async function buildPkceParams(config: AuthConfig): Promise<URLSearchParams> {
   return new URLSearchParams({
     scope: config.scopes ?? 'trade account_manage',
     response_type: 'code',
-    client_id: config.clientId,
+    app_id: config.clientId,
     redirect_uri: config.redirectUri,
     state: csrfToken,
     code_challenge: codeChallenge,
@@ -53,7 +53,7 @@ export async function buildAuthorizationUrl(config: AuthConfig): Promise<string>
   if (config.utmMedium)   params.set('utm_medium', config.utmMedium);
   if (config.utmCampaign) params.set('utm_campaign', config.utmCampaign);
 
-  return `${getAuthBaseUrl()}/auth?${params.toString()}`;
+  return `${getAuthBaseUrl()}/authorize?${params.toString()}`;
 }
 
 /**
@@ -76,7 +76,7 @@ export async function buildSignUpUrl(config: AuthConfig): Promise<string> {
   if (config.utmMedium)   params.set('utm_medium', config.utmMedium);
   if (config.utmCampaign) params.set('utm_campaign', config.utmCampaign);
 
-  return `${getAuthBaseUrl()}/auth?${params.toString()}`;
+  return `${getAuthBaseUrl()}/authorize?${params.toString()}`;
 }
 
 /**
@@ -153,7 +153,7 @@ export async function exchangeCodeForTokens(params: TokenExchangeParams): Promis
   const body = new URLSearchParams({
     grant_type: 'authorization_code',
     code: params.code,
-    client_id: params.clientId,
+    app_id: params.clientId,
     redirect_uri: params.redirectUri,
     code_verifier: params.codeVerifier,
   });
@@ -195,7 +195,7 @@ export async function refreshAccessToken(
   const body = new URLSearchParams({
     grant_type: 'refresh_token',
     refresh_token: refreshToken,
-    client_id: clientId,
+    app_id: clientId,
   });
 
   const response = await fetch(`${getAuthBaseUrl()}/token`, {

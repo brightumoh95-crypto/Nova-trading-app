@@ -103,9 +103,13 @@ export const generateOAuthURL = async (prompt?: string): Promise<string> => {
         const clientId = process.env.NEXT_PUBLIC_DERIV_APP_ID;
         if (!clientId) return '';
 
+        const basePath = (process.env.NEXT_PUBLIC_BASE_PATH || '').replace(/\/$/, '');
+        const configuredRedirectUri = process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URL;
+        const redirectUri = configuredRedirectUri || `${window.location.origin}${basePath}/`;
+
         const config: AuthConfig = {
             clientId,
-            redirectUri: window.location.origin,
+            redirectUri,
             scopes: 'trade',
         };
 
