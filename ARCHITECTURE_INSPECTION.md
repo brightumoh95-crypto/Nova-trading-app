@@ -17,7 +17,7 @@ Inspection date: 2026-07-07
   - `src/components`: layout, run panel, notifications, shared UI, trading modals.
   - `src/pages`: dashboard, bot builder, charts, tutorials.
   - `src/stores`: MobX application, client/account, run-panel, dashboard, strategy stores.
-  - `src/external/bot-skeleton`: vendored Deriv bot/Blockly/trading engine.
+  - `src/external/bot-skeleton`: vendored Nova Trading/Blockly/trading engine.
   - `src/external/deriv-core`: vendored OAuth PKCE/storage/url helpers.
   - `src/services`: DerivWS account discovery and active symbol processing.
   - `src/xml`: bundled starter/risk-management strategy XML templates.
