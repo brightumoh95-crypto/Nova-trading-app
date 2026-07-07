@@ -27,24 +27,12 @@ async function buildPkceParams(config: AuthConfig): Promise<URLSearchParams> {
   return new URLSearchParams({
     scope: config.scopes ?? 'trade account_manage',
     response_type: 'code',
+    client_id: config.clientId,
     app_id: config.clientId,
     redirect_uri: config.redirectUri,
     state: csrfToken,
     code_challenge: codeChallenge,
     code_challenge_method: 'S256',
-  });
-}
-
-function buildAppIdAuthorizeParams(config: AuthConfig): URLSearchParams {
-  const csrfToken = generateRandomBase64url(32);
-  storeCSRFToken(csrfToken);
-
-  return new URLSearchParams({
-    app_id: config.clientId,
-    redirect_uri: config.redirectUri,
-    state: csrfToken,
-    l: 'EN',
-    brand: 'deriv',
   });
 }
 
@@ -56,7 +44,7 @@ function buildAppIdAuthorizeParams(config: AuthConfig): URLSearchParams {
  * Stores CSRF token and code verifier in sessionStorage.
  */
 export async function buildAuthorizationUrl(config: AuthConfig): Promise<string> {
-  const params = buildAppIdAuthorizeParams(config);
+  const params = await buildPkceParams(config);
 
   if (config.affiliateToken) {
     const tokenParam = config.affiliateTokenParam ?? 't';
@@ -166,7 +154,7 @@ export async function exchangeCodeForTokens(params: TokenExchangeParams): Promis
   const body = new URLSearchParams({
     grant_type: 'authorization_code',
     code: params.code,
-    app_id: params.clientId,
+    client_id: params.clientId,
     redirect_uri: params.redirectUri,
     code_verifier: params.codeVerifier,
   });
@@ -208,7 +196,7 @@ export async function refreshAccessToken(
   const body = new URLSearchParams({
     grant_type: 'refresh_token',
     refresh_token: refreshToken,
-    app_id: clientId,
+    client_id: clientId,
   });
 
   const response = await fetch(`${getAuthBaseUrl()}/token`, {

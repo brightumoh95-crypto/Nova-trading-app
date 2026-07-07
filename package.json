@@ -11,7 +11,7 @@
     "test": "jest",
     "type-check": "tsc --noEmit",
     "generate:brand-css": "node scripts/generate-brand-css.js",
-    "prebuild": "node scripts/generate-brand-css.js && node scripts/patch-deriv-utils-oauth.js"
+    "prebuild": "node scripts/generate-brand-css.js"
   },
   "dependencies": {
     "@deriv-com/quill-ui": "1.18.1",
