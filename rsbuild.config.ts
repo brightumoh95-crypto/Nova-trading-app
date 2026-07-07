@@ -8,6 +8,7 @@ import { pluginSass } from '@rsbuild/plugin-sass';
 loadEnv({ mode: 'production' });
 
 const isStaticBuild = process.env.NEXT_PUBLIC_APP_BUILD === 'true';
+const publicBasePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? '').replace(/\/$/, '');
 
 // Resolve smartcharts from wherever the package actually lives so the asset
 // copy works both standalone and inside the monorepo (npm workspaces hoist the
@@ -45,6 +46,13 @@ export default defineConfig({
         // Marks the static preview build (served under /bot/preview); drives the
         // router basename so React Router resolves under that path prefix.
         NEXT_PUBLIC_APP_BUILD: JSON.stringify(process.env.NEXT_PUBLIC_APP_BUILD ?? ''),
+        // Optional subpath deploy base, e.g. /nova-staging on the Contabo HTTPS host.
+        NEXT_PUBLIC_BASE_PATH: JSON.stringify(publicBasePath),
+        NEXT_PUBLIC_OAUTH_REDIRECT_URL: JSON.stringify(process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URL ?? ''),
+        NEXT_PUBLIC_SITE_URL: JSON.stringify(process.env.NEXT_PUBLIC_SITE_URL ?? ''),
+        NEXT_PUBLIC_PUBLIC_URL: JSON.stringify(process.env.NEXT_PUBLIC_PUBLIC_URL ?? ''),
+        NEXT_PUBLIC_DERIV_WS_ENDPOINT: JSON.stringify(process.env.NEXT_PUBLIC_DERIV_WS_ENDPOINT ?? ''),
+        NEXT_PUBLIC_DERIV_API_ENDPOINT: JSON.stringify(process.env.NEXT_PUBLIC_DERIV_API_ENDPOINT ?? ''),
         GD_CLIENT_ID: JSON.stringify(process.env.GD_CLIENT_ID),
         GD_APP_ID: JSON.stringify(process.env.GD_APP_ID),
         GD_API_KEY: JSON.stringify(process.env.GD_API_KEY),
@@ -65,7 +73,7 @@ export default defineConfig({
     },
   },
   output: {
-    assetPrefix: isStaticBuild ? '/bot/preview/' : '/',
+    assetPrefix: isStaticBuild ? '/bot/preview/' : publicBasePath ? `${publicBasePath}/` : '/',
     distPath: {
       root: isStaticBuild ? 'out/preview' : 'dist',
     },

@@ -26,10 +26,20 @@ const LanguageHandler = ({ children }: { children: React.ReactNode }) => {
     return <>{children}</>;
 };
 
-// The static preview build is served under /bot/preview (see rsbuild.config.ts
-// assetPrefix), so React Router must resolve routes under that prefix. Standalone
-// partner deploys are served at the root, so no basename there.
-const routerBasename = isPreviewMode() ? PREVIEW_BASE_PATH : undefined;
+const getRuntimeBasePath = () => {
+    const configuredBasePath = (process.env.NEXT_PUBLIC_BASE_PATH || '').replace(/\/$/, '');
+    if (configuredBasePath) return configuredBasePath;
+    return isPreviewMode() ? PREVIEW_BASE_PATH : undefined;
+};
+
+const getOAuthRedirectUri = () =>
+    (process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URL || '').replace(/\/$/, '') ||
+    `${window.location.origin}${(getRuntimeBasePath() || '').replace(/\/$/, '')}`;
+
+// The static preview build is served under /bot/preview and HTTPS staging can be
+// served under /nova-staging, so React Router must resolve routes under the
+// configured path prefix. Standalone partner deploys are served at root.
+const routerBasename = getRuntimeBasePath();
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -83,7 +93,7 @@ function App() {
             try {
                 const authInfo = await handleOAuthCallback(window.location.href, {
                     clientId: process.env.NEXT_PUBLIC_DERIV_APP_ID || '',
-                    redirectUri: window.location.origin,
+                    redirectUri: getOAuthRedirectUri(),
                     scopes: 'trade',
                 });
 

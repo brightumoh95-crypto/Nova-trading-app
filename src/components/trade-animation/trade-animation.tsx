@@ -22,7 +22,7 @@ type TTradeAnimation = {
 };
 
 const TradeAnimation = observer(({ className, should_show_overlay }: TTradeAnimation) => {
-    const { dashboard, run_panel, summary_card, blockly_store } = useStore();
+    const { dashboard, run_panel, summary_card, blockly_store, client } = useStore();
     const { active_tab } = dashboard;
     const { has_active_bot, has_saved_bots } = blockly_store;
     const { isMobile } = useDevice();
@@ -36,6 +36,21 @@ const TradeAnimation = observer(({ className, should_show_overlay }: TTradeAnima
     // Get the load_modal store to monitor strategy deletions
     const { load_modal } = useStore();
     const { dashboard_strategies, is_delete_modal_open } = load_modal;
+
+    React.useEffect(() => {
+        const syncRunButtonAccountGate = () => {
+            const hasSelectedAccount = Boolean(window.localStorage.getItem('active_loginid'));
+            document.querySelectorAll<HTMLButtonElement>('#db-animation__run-button').forEach(button => {
+                if (!hasSelectedAccount && button.textContent?.trim() === 'Run') {
+                    button.disabled = true;
+                }
+            });
+        };
+
+        syncRunButtonAccountGate();
+        const intervalId = window.setInterval(syncRunButtonAccountGate, 500);
+        return () => window.clearInterval(intervalId);
+    }, [client.is_logged_in, client.loginid]);
 
     // Track previous state of delete modal to detect when it closes
     const prevDeleteModalOpen = React.useRef(is_delete_modal_open);
@@ -104,9 +119,12 @@ const TradeAnimation = observer(({ className, should_show_overlay }: TTradeAnima
 
     // Disable the RUN button if:
     // 1. There are no active or saved bots AND the user is not in the bot builder tab
-    const should_disable_run = has_no_bots && !is_bot_builder_tab;
+    // 2. The user has not logged in and selected a Deriv account yet
+    const has_stored_account = typeof window !== 'undefined' && Boolean(window.localStorage.getItem('active_loginid'));
+    const is_account_ready = client.is_logged_in && Boolean(client.loginid) && has_stored_account;
+    const should_disable_run = (!is_account_ready && !is_stop_button_visible) || (has_no_bots && !is_bot_builder_tab);
 
-    const is_disabled = is_stop_button_visible ? false : shouldDisable || should_disable_run;
+    const is_disabled = is_stop_button_visible && is_stop_button_disabled ? true : is_stop_button_visible ? false : shouldDisable || should_disable_run;
 
     // Show the tooltip when:
     // 1. The user is NOT in the bot builder tab, AND
