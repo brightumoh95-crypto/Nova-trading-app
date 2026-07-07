@@ -155,10 +155,24 @@ export const generateOAuthURL = async (prompt?: string): Promise<string> => {
             }
         }
 
-        if (prompt === 'registration') {
-            return await buildSignUpUrl(config);
+        const oauthUrl = prompt === 'registration' ? await buildSignUpUrl(config) : await buildAuthorizationUrl(config);
+
+        if (typeof window !== 'undefined') {
+            const oauthParams = new URL(oauthUrl).searchParams;
+            const state = oauthParams.get('state') || '';
+            const debugPayload = {
+                startUrl: oauthUrl,
+                redirectUri,
+                stateCreated: state,
+                callbackReceived: false,
+                codeReceived: false,
+                accountCallbackReceived: false,
+                lastUpdated: new Date().toISOString(),
+            };
+            localStorage.setItem('nova_oauth_debug', JSON.stringify(debugPayload));
         }
-        return await buildAuthorizationUrl(config);
+
+        return oauthUrl;
     } catch (error) {
         console.error('Error generating OAuth URL:', error);
         return '';

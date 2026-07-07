@@ -1,5 +1,6 @@
 .nova-dashboard-hero,
-.nova-panel {
+.nova-panel,
+.nova-oauth-debug {
     position: relative;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.12);
@@ -18,7 +19,8 @@
 }
 
 .nova-dashboard-hero::before,
-.nova-panel::before {
+.nova-panel::before,
+.nova-oauth-debug::before {
     content: '';
     position: absolute;
     inset: -40% -20% auto auto;
@@ -178,11 +180,69 @@
     margin-top: 14px;
 }
 
+.nova-oauth-debug {
+    margin: -8px 0 24px;
+    padding: 20px;
+}
+
+.nova-oauth-debug__heading,
+.nova-oauth-debug__grid,
+.nova-oauth-debug__grid > div {
+    position: relative;
+    z-index: 1;
+}
+
+.nova-oauth-debug__heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.nova-oauth-debug__heading span,
+.nova-oauth-debug__grid span {
+    color: #7dd3fc;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.nova-oauth-debug__heading strong {
+    color: #fff;
+}
+
+.nova-oauth-debug__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.nova-oauth-debug__grid > div {
+    border: 1px solid rgba(125, 211, 252, 0.18);
+    border-radius: 16px;
+    padding: 12px;
+    background: rgba(2, 6, 23, 0.46);
+}
+
+.nova-oauth-debug code,
+.nova-oauth-debug strong {
+    display: block;
+    margin-top: 6px;
+    overflow-wrap: anywhere;
+    color: #f8fafc;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
 @media (max-width: 900px) {
     .nova-dashboard-hero,
     .nova-dashboard-hero__glass,
     .nova-grid,
-    .nova-card-grid {
+    .nova-card-grid,
+    .nova-oauth-debug__grid {
         grid-template-columns: 1fr;
     }
 

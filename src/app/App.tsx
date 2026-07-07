@@ -33,7 +33,25 @@ const getRuntimeBasePath = () => {
 };
 
 const getOAuthRedirectUri = () =>
-    process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URL || `${window.location.origin}${(getRuntimeBasePath() || '').replace(/\/$/, '')}/`;
+    process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URL ||
+    `${window.location.origin}${(getRuntimeBasePath() || '').replace(/\/$/, '')}/auth/deriv/callback`;
+
+const updateOAuthDebug = (updates: Record<string, unknown>) => {
+    if (typeof window === 'undefined') return;
+    try {
+        const current = JSON.parse(localStorage.getItem('nova_oauth_debug') || '{}');
+        localStorage.setItem(
+            'nova_oauth_debug',
+            JSON.stringify({
+                ...current,
+                ...updates,
+                lastUpdated: new Date().toISOString(),
+            })
+        );
+    } catch {
+        localStorage.setItem('nova_oauth_debug', JSON.stringify({ ...updates, lastUpdated: new Date().toISOString() }));
+    }
+};
 
 const getLegacyOAuthAccounts = () => {
     const params = new URLSearchParams(window.location.search);
@@ -81,6 +99,7 @@ const router = createBrowserRouter(
         >
             {/* All child routes will be passed as children to Layout */}
             <Route index element={<AppRoot />} />
+            <Route path='auth/deriv/callback' element={<AppRoot />} />
             {/* App Builder embeds the template at /preview — render the same app shell */}
             <Route path='preview' element={<AppRoot />} />
         </Route>
@@ -103,6 +122,16 @@ function App() {
     React.useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const legacyAccounts = getLegacyOAuthAccounts();
+        const isCallbackPath = window.location.pathname.endsWith('/auth/deriv/callback');
+        updateOAuthDebug({
+            redirectUri: getOAuthRedirectUri(),
+            callbackReceived: isCallbackPath || urlParams.has('code') || legacyAccounts.length > 0,
+            codeReceived: urlParams.has('code'),
+            accountCallbackReceived: legacyAccounts.length > 0,
+            callbackUrl: window.location.href,
+            callbackPath: window.location.pathname,
+            callbackState: urlParams.get('state') || '',
+        });
         if (!urlParams.has('code') && legacyAccounts.length === 0) return;
 
         const handleCallback = async () => {

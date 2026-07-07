@@ -33,6 +33,25 @@ const NovaPanel = ({ title, eyebrow, children }: { title: string; eyebrow: strin
 
 export const NovaExecutiveDashboard = observer(({ onBuildStrategy }: { onBuildStrategy?: () => void }) => {
     const store = useStore();
+    const [oauthDebug, setOauthDebug] = React.useState<Record<string, any>>({});
+
+    React.useEffect(() => {
+        const readDebug = () => {
+            try {
+                setOauthDebug(JSON.parse(localStorage.getItem('nova_oauth_debug') || '{}'));
+            } catch {
+                setOauthDebug({});
+            }
+        };
+        readDebug();
+        const timer = window.setInterval(readDebug, 1000);
+        window.addEventListener('storage', readDebug);
+        return () => {
+            window.clearInterval(timer);
+            window.removeEventListener('storage', readDebug);
+        };
+    }, []);
+
     const client = store?.client;
     const runPanel = store?.run_panel;
     const strategyCount = store?.load_modal?.dashboard_strategies?.length ?? 0;
@@ -51,26 +70,42 @@ export const NovaExecutiveDashboard = observer(({ onBuildStrategy }: { onBuildSt
     const balance = client?.balance ? `${client.balance} ${client.currency || ''}` : 'Connect account';
 
     return (
-        <section className='nova-dashboard-hero'>
-            <div className='nova-dashboard-hero__copy'>
-                <span className='nova-kicker'>Nova Trading Command Center</span>
-                <h1>Professional automated trading, powered by the Deriv engine.</h1>
-                <p>
-                    Build, test, and manage automated trading strategies from a polished workspace designed
-                    for clear account control, faster setup, and safer demo-first strategy practice.
-                </p>
-                <div className='nova-dashboard-hero__actions'>
-                    <button type='button' onClick={onBuildStrategy}>Build strategy</button>
-                    <span>{runPanel?.is_running ? 'Bot running' : 'Engine standing by'}</span>
+        <>
+            <section className='nova-dashboard-hero'>
+                <div className='nova-dashboard-hero__copy'>
+                    <span className='nova-kicker'>Nova Trading Command Center</span>
+                    <h1>Professional automated trading, powered by the Deriv engine.</h1>
+                    <p>
+                        Build, test, and manage automated trading strategies from a polished workspace designed
+                        for clear account control, faster setup, and safer demo-first strategy practice.
+                    </p>
+                    <div className='nova-dashboard-hero__actions'>
+                        <button type='button' onClick={onBuildStrategy}>Build strategy</button>
+                        <span>{runPanel?.is_running ? 'Bot running' : 'Engine standing by'}</span>
+                    </div>
                 </div>
-            </div>
-            <div className='nova-dashboard-hero__glass' aria-label='Nova trading status'>
-                <NovaMetric label='Active account' value={activeLogin} />
-                <NovaMetric label='Balance' value={balance} tone='success' />
-                <NovaMetric label='Saved strategies' value={String(strategyCount)} />
-                <NovaMetric label='Discovered accounts' value={String(accountCount)} />
-            </div>
-        </section>
+                <div className='nova-dashboard-hero__glass' aria-label='Nova trading status'>
+                    <NovaMetric label='Active account' value={activeLogin} />
+                    <NovaMetric label='Balance' value={balance} tone='success' />
+                    <NovaMetric label='Saved strategies' value={String(strategyCount)} />
+                    <NovaMetric label='Discovered accounts' value={String(accountCount)} />
+                </div>
+            </section>
+            <section className='nova-oauth-debug' aria-label='OAuth debug panel'>
+                <div className='nova-oauth-debug__heading'>
+                    <span>OAuth Debug</span>
+                    <strong>Visible staging diagnostics</strong>
+                </div>
+                <div className='nova-oauth-debug__grid'>
+                    <div><span>OAuth start URL</span><code>{oauthDebug.startUrl || 'Not created yet'}</code></div>
+                    <div><span>redirect_uri</span><code>{oauthDebug.redirectUri || 'Not configured'}</code></div>
+                    <div><span>state created</span><code>{oauthDebug.stateCreated || 'No'}</code></div>
+                    <div><span>callback received</span><strong>{oauthDebug.callbackReceived ? 'Yes' : 'No'}</strong></div>
+                    <div><span>code received</span><strong>{oauthDebug.codeReceived ? 'Yes' : 'No'}</strong></div>
+                    <div><span>account callback received</span><strong>{oauthDebug.accountCallbackReceived ? 'Yes' : 'No'}</strong></div>
+                </div>
+            </section>
+        </>
     );
 });
 
