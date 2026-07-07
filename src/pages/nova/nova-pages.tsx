@@ -36,8 +36,18 @@ export const NovaExecutiveDashboard = observer(({ onBuildStrategy }: { onBuildSt
     const client = store?.client;
     const runPanel = store?.run_panel;
     const strategyCount = store?.load_modal?.dashboard_strategies?.length ?? 0;
-    const accountCount = client?.account_list?.length ?? 0;
-    const activeLogin = client?.loginid || localStorage.getItem('active_loginid') || 'Not connected';
+    const discoveredAccounts = (() => {
+        try {
+            const stored = sessionStorage.getItem('deriv_accounts') || localStorage.getItem('clientAccounts');
+            if (!stored) return [];
+            const parsed = JSON.parse(stored);
+            return Array.isArray(parsed) ? parsed : Object.keys(parsed);
+        } catch {
+            return [];
+        }
+    })();
+    const accountCount = client?.account_list?.length || discoveredAccounts.length || 0;
+    const activeLogin = client?.loginid || localStorage.getItem('active_loginid') || 'Select account';
     const balance = client?.balance ? `${client.balance} ${client.currency || ''}` : 'Connect account';
 
     return (

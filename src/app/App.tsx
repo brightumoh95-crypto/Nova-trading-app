@@ -33,8 +33,23 @@ const getRuntimeBasePath = () => {
 };
 
 const getOAuthRedirectUri = () =>
-    (process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URL || '').replace(/\/$/, '') ||
-    `${window.location.origin}${(getRuntimeBasePath() || '').replace(/\/$/, '')}`;
+    process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URL || `${window.location.origin}${(getRuntimeBasePath() || '').replace(/\/$/, '')}/`;
+
+const getLegacyOAuthAccounts = () => {
+    const params = new URLSearchParams(window.location.search);
+    const accounts: Array<{ loginid?: string; token?: string; currency?: string }> = [];
+    params.forEach((value, key) => {
+        const match = key.match(/^(acct|token|cur)(\d+)$/);
+        if (!match) return;
+        const [, kind, rawIndex] = match;
+        const index = Number(rawIndex) - 1;
+        accounts[index] = accounts[index] || {};
+        if (kind === 'acct') accounts[index].loginid = value;
+        if (kind === 'token') accounts[index].token = value;
+        if (kind === 'cur') accounts[index].currency = value;
+    });
+    return accounts.filter(account => account.loginid && account.token);
+};
 
 // The static preview build is served under /bot/preview and HTTPS staging can be
 // served under /nova-staging, so React Router must resolve routes under the
@@ -87,36 +102,57 @@ function App() {
 
     React.useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
-        if (!urlParams.has('code')) return;
+        const legacyAccounts = getLegacyOAuthAccounts();
+        if (!urlParams.has('code') && legacyAccounts.length === 0) return;
 
         const handleCallback = async () => {
             try {
+                const { DerivWSAccountsService } = await import('@/services/derivws-accounts.service');
+
+                if (legacyAccounts.length > 0) {
+                    const accountsMap = legacyAccounts.reduce<Record<string, string>>((acc, account) => {
+                        acc[account.loginid as string] = account.token as string;
+                        return acc;
+                    }, {});
+                    const clientAccounts = legacyAccounts.reduce<Record<string, { token: string; currency?: string }>>(
+                        (acc, account) => {
+                            acc[account.loginid as string] = {
+                                token: account.token as string,
+                                currency: account.currency,
+                            };
+                            return acc;
+                        },
+                        {}
+                    );
+                    localStorage.setItem('accountsList', JSON.stringify(accountsMap));
+                    localStorage.setItem('clientAccounts', JSON.stringify(clientAccounts));
+                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('active_loginid');
+                    localStorage.removeItem('account_type');
+                    window.history.replaceState(null, '', getOAuthRedirectUri());
+                    return;
+                }
+
                 const authInfo = await handleOAuthCallback(window.location.href, {
                     clientId: process.env.NEXT_PUBLIC_DERIV_APP_ID || '',
                     redirectUri: getOAuthRedirectUri(),
                     scopes: 'trade',
                 });
 
-                const { DerivWSAccountsService } = await import('@/services/derivws-accounts.service');
                 const accounts = await DerivWSAccountsService.fetchAccountsList(authInfo.access_token);
 
                 if (accounts && accounts.length > 0) {
                     DerivWSAccountsService.storeAccounts(accounts);
-                    const firstAccount = accounts[0];
-                    localStorage.setItem('active_loginid', firstAccount.account_id);
-                    const isDemo =
-                        firstAccount.account_id.startsWith('VRT') || firstAccount.account_id.startsWith('VRTC');
-                    localStorage.setItem('account_type', isDemo ? 'demo' : 'real');
-
-                    const { api_base } = await import('@/external/bot-skeleton');
-                    await api_base.init(true);
+                    localStorage.removeItem('active_loginid');
+                    localStorage.removeItem('account_type');
+                    localStorage.removeItem('authToken');
                 } else {
                     console.error('No accounts returned after authentication');
                 }
             } catch (error) {
                 console.error('OAuth callback error:', error);
             } finally {
-                cleanupUrl(window.location.origin);
+                cleanupUrl(getOAuthRedirectUri());
             }
         };
 

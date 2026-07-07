@@ -35,6 +35,19 @@ async function buildPkceParams(config: AuthConfig): Promise<URLSearchParams> {
   });
 }
 
+function buildAppIdAuthorizeParams(config: AuthConfig): URLSearchParams {
+  const csrfToken = generateRandomBase64url(32);
+  storeCSRFToken(csrfToken);
+
+  return new URLSearchParams({
+    app_id: config.clientId,
+    redirect_uri: config.redirectUri,
+    state: csrfToken,
+    l: 'EN',
+    brand: 'deriv',
+  });
+}
+
 /**
  * Build the OAuth 2.0 login authorization URL with PKCE parameters.
  * Includes optional partner attribution params (affiliate token, utm_*) when
@@ -43,7 +56,7 @@ async function buildPkceParams(config: AuthConfig): Promise<URLSearchParams> {
  * Stores CSRF token and code verifier in sessionStorage.
  */
 export async function buildAuthorizationUrl(config: AuthConfig): Promise<string> {
-  const params = await buildPkceParams(config);
+  const params = buildAppIdAuthorizeParams(config);
 
   if (config.affiliateToken) {
     const tokenParam = config.affiliateTokenParam ?? 't';
