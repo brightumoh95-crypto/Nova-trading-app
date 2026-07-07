@@ -46,6 +46,7 @@ import './main.scss';
 
 const ChartWrapper = lazy(() => import('../chart/chart-wrapper'));
 const Tutorial = lazy(() => import('../tutorials'));
+const NovaPages = lazy(() => import('../nova/nova-pages'));
 
 const AppWrapper = observer(() => {
     const { connectionStatus } = useApiBase();
@@ -78,7 +79,18 @@ const AppWrapper = observer(() => {
     const { clear } = summary_card;
     const { DASHBOARD, BOT_BUILDER } = DBOT_TABS;
     const init_render = React.useRef(true);
-    const hash = ['dashboard', 'bot_builder', 'chart', 'tutorial'];
+    const hash = [
+        'dashboard',
+        'bot_builder',
+        'chart',
+        'tutorial',
+        'portfolio',
+        'ai_assistant',
+        'strategies',
+        'accounts',
+        'analytics',
+        'settings',
+    ];
     const { isDesktop } = useDevice();
     const location = useLocation();
     const navigate = useNavigate();
@@ -451,6 +463,54 @@ const AppWrapper = observer(() => {
                                         <Tutorial handleTabChange={handleTabChange} />
                                     </Suspense>
                                 </div>
+                            </div>
+                            <div
+                                label={<><LabelPairedObjectsColumnCaptionRegularIcon height='24px' width='24px' fill='var(--text-general)' /><Localize i18n_default_text='Portfolio' /></>}
+                                id='id-nova-portfolio'
+                            >
+                                <Suspense fallback={<ChunkLoader message={localize('Loading Nova portfolio...')} />}>
+                                    <NovaPages page='portfolio' />
+                                </Suspense>
+                            </div>
+                            <div
+                                label={<><LegacyGuide1pxIcon height='16px' width='16px' fill='var(--text-general)' className='icon-general-fill-g-path' /><Localize i18n_default_text='AI Assistant' /></>}
+                                id='id-nova-ai-assistant'
+                            >
+                                <Suspense fallback={<ChunkLoader message={localize('Loading Nova AI assistant...')} />}>
+                                    <NovaPages page='assistant' />
+                                </Suspense>
+                            </div>
+                            <div
+                                label={<><LabelPairedPuzzlePieceTwoCaptionBoldIcon height='24px' width='24px' fill='var(--text-general)' /><Localize i18n_default_text='Strategies' /></>}
+                                id='id-nova-strategies'
+                            >
+                                <Suspense fallback={<ChunkLoader message={localize('Loading strategy manager...')} />}>
+                                    <NovaPages page='strategies' onBuildStrategy={() => handleTabChange(BOT_BUILDER)} />
+                                </Suspense>
+                            </div>
+                            <div
+                                label={<><LabelPairedObjectsColumnCaptionRegularIcon height='24px' width='24px' fill='var(--text-general)' /><Localize i18n_default_text='Accounts' /></>}
+                                id='id-nova-accounts'
+                            >
+                                <Suspense fallback={<ChunkLoader message={localize('Loading account manager...')} />}>
+                                    <NovaPages page='accounts' />
+                                </Suspense>
+                            </div>
+                            <div
+                                label={<><LabelPairedChartLineCaptionRegularIcon height='24px' width='24px' fill='var(--text-general)' /><Localize i18n_default_text='Analytics' /></>}
+                                id='id-nova-analytics'
+                            >
+                                <Suspense fallback={<ChunkLoader message={localize('Loading analytics...')} />}>
+                                    <NovaPages page='analytics' />
+                                </Suspense>
+                            </div>
+                            <div
+                                label={<><LegacyGuide1pxIcon height='16px' width='16px' fill='var(--text-general)' className='icon-general-fill-g-path' /><Localize i18n_default_text='Settings' /></>}
+                                id='id-nova-settings'
+                            >
+                                <Suspense fallback={<ChunkLoader message={localize('Loading settings...')} />}>
+                                    <NovaPages page='settings' />
+                                </Suspense>
                             </div>
                         </Tabs>
                         {!isDesktop && right_tab_shadow && <span className='tabs-shadow tabs-shadow--right' />}{' '}

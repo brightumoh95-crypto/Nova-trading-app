@@ -6,6 +6,7 @@ import { useStore } from '@/hooks/useStore';
 import { localize } from '@deriv-com/translations';
 import { useDevice } from '@deriv-com/ui';
 import OnboardTourHandler from '../tutorials/dbot-tours/onboarding-tour';
+import { NovaExecutiveDashboard } from '../nova/nova-pages';
 import Announcements from './announcements';
 import Cards from './cards';
 import InfoPanel from './info-panel';
@@ -33,6 +34,7 @@ const DashboardComponent = observer(({ handleTabChange }: TMobileIconGuide) => {
                     {client.is_logged_in && (
                         <Announcements is_mobile={!isDesktop} is_tablet={isTablet} handleTabChange={handleTabChange} />
                     )}
+                    <NovaExecutiveDashboard onBuildStrategy={() => handleTabChange(1)} />
                     <div className='quick-panel'>
                         <div
                             className={classNames('tab__dashboard__header', {

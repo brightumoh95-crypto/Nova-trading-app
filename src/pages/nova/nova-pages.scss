@@ -1,0 +1,197 @@
+.nova-dashboard-hero,
+.nova-panel {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 28px;
+    background: linear-gradient(135deg, #07111f 0%, #0c1b33 48%, #111827 100%);
+    box-shadow: 0 24px 80px rgba(2, 8, 23, 0.24);
+    color: #f8fafc;
+}
+
+.nova-dashboard-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+    gap: 24px;
+    margin: 16px 0 24px;
+    padding: clamp(24px, 4vw, 44px);
+}
+
+.nova-dashboard-hero::before,
+.nova-panel::before {
+    content: '';
+    position: absolute;
+    inset: -40% -20% auto auto;
+    width: 420px;
+    height: 420px;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.28), transparent 62%);
+    pointer-events: none;
+}
+
+.nova-dashboard-hero__copy,
+.nova-dashboard-hero__glass,
+.nova-panel > * {
+    position: relative;
+    z-index: 1;
+}
+
+.nova-kicker,
+.nova-panel__heading span,
+.nova-strategy-card span {
+    display: inline-flex;
+    width: fit-content;
+    border: 1px solid rgba(125, 211, 252, 0.28);
+    border-radius: 999px;
+    padding: 6px 10px;
+    background: rgba(14, 165, 233, 0.12);
+    color: #7dd3fc;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.nova-dashboard-hero h1,
+.nova-panel h2 {
+    margin: 14px 0;
+    color: #fff;
+    font-size: clamp(30px, 5vw, 56px);
+    line-height: 0.95;
+}
+
+.nova-panel h2 {
+    font-size: clamp(26px, 4vw, 42px);
+}
+
+.nova-dashboard-hero p,
+.nova-panel p,
+.nova-list__row span,
+.nova-status-stack,
+.nova-assistant {
+    color: #b9c6d8;
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+.nova-dashboard-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+    margin-top: 24px;
+}
+
+.nova-dashboard-hero__actions button,
+.nova-strategy-card button {
+    border: 0;
+    border-radius: 999px;
+    padding: 12px 18px;
+    background: linear-gradient(135deg, #22d3ee, #6366f1);
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.nova-dashboard-hero__actions button:hover,
+.nova-strategy-card button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 35px rgba(34, 211, 238, 0.22);
+}
+
+.nova-dashboard-hero__glass,
+.nova-grid,
+.nova-card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.nova-metric,
+.nova-list__row,
+.nova-prompt-card,
+.nova-strategy-card,
+.nova-status-stack div {
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 20px;
+    padding: 18px;
+    background: rgba(15, 23, 42, 0.68);
+    backdrop-filter: blur(18px);
+}
+
+.nova-metric span {
+    display: block;
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.nova-metric strong {
+    display: block;
+    margin-top: 8px;
+    overflow: hidden;
+    color: #fff;
+    font-size: 22px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.nova-metric--success strong { color: #34d399; }
+
+.nova-panel {
+    margin: 16px 0;
+    padding: clamp(22px, 4vw, 38px);
+}
+
+.nova-panel__heading {
+    margin-bottom: 20px;
+}
+
+.nova-list,
+.nova-status-stack,
+.nova-assistant {
+    display: grid;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.nova-list__row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.nova-card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.nova-strategy-card h3 {
+    margin: 14px 0 8px;
+    color: #fff;
+    font-size: 22px;
+}
+
+.nova-strategy-card button {
+    margin-top: 14px;
+}
+
+@media (max-width: 900px) {
+    .nova-dashboard-hero,
+    .nova-dashboard-hero__glass,
+    .nova-grid,
+    .nova-card-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .nova-dashboard-hero,
+    .nova-panel {
+        border-radius: 22px;
+    }
+
+    .nova-list__row {
+        flex-direction: column;
+    }
+}
