@@ -111,7 +111,7 @@ function App() {
                 const authInfo = await handleOAuthCallback(window.location.href, {
                     clientId: process.env.NEXT_PUBLIC_DERIV_APP_ID || '',
                     redirectUri: getOAuthRedirectUri(),
-                    scopes: 'trade',
+                    scopes: 'trade account_manage',
                 });
 
                 const { DerivWSAccountsService } = await import('@/services/derivws-accounts.service');

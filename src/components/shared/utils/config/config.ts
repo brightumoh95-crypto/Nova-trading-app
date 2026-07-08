@@ -110,7 +110,7 @@ export const generateOAuthURL = async (prompt?: string): Promise<string> => {
         const config: AuthConfig = {
             clientId,
             redirectUri,
-            scopes: 'trade',
+            scopes: 'trade account_manage',
         };
 
         // Static referral link (fallback for direct visits without affiliate click)

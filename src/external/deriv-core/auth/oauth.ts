@@ -54,7 +54,7 @@ export async function buildAuthorizationUrl(config: AuthConfig): Promise<string>
   if (config.utmMedium)   params.set('utm_medium', config.utmMedium);
   if (config.utmCampaign) params.set('utm_campaign', config.utmCampaign);
 
-  return `${getAuthBaseUrl()}/authorize?${params.toString()}`;
+  return `${getAuthBaseUrl()}/auth?${params.toString()}`;
 }
 
 /**
@@ -77,7 +77,7 @@ export async function buildSignUpUrl(config: AuthConfig): Promise<string> {
   if (config.utmMedium)   params.set('utm_medium', config.utmMedium);
   if (config.utmCampaign) params.set('utm_campaign', config.utmCampaign);
 
-  return `${getAuthBaseUrl()}/authorize?${params.toString()}`;
+  return `${getAuthBaseUrl()}/auth?${params.toString()}`;
 }
 
 /**
